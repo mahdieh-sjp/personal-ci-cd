@@ -1,0 +1,24 @@
+plugins {
+    id 'java'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.maddie.TestApp'
+        )
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.0'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+test {
+    useJUnitPlatform()
+}
