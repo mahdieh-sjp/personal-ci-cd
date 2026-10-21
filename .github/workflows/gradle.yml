@@ -16,12 +16,16 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{matrix.os}}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macOS-latest]
+        
     permissions:
       contents: read
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -35,6 +39,22 @@ jobs:
 
     - name: Build with Gradle Wrapper
       run: ./gradlew build
+      
+    - name: Upload Compiled JAR
+      uses: actions/upload-artifact@v4
+      if: success() 
+      with:
+        name: personal-ci-cd-jar
+        path: build/libs/*.jar
+        retention-days: 30
+        
+    - name: Upload Test Reports
+      uses: actions/upload-artifact@v4
+      if: always() 
+      with:
+        name: gradle-test-reports
+        path: build/reports/tests/test/
+        retention-days: 30
 
     # NOTE: The Gradle Wrapper is the default and recommended way to run Gradle (https://docs.gradle.org/current/userguide/gradle_wrapper.html).
     # If your project does not have the Gradle Wrapper configured, you can use the following configuration to run Gradle with a specified version.
